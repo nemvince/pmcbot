@@ -1,0 +1,13 @@
+{
+  "name": "pmcbackend",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
