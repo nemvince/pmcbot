@@ -1,12 +1,13 @@
-import { APIServer } from "./api";
+import { app } from "./api";
 import { client } from "./discord";
+import { wss } from "./wss";
 
 class PMCBot {
-  private apiServer: APIServer;
+  private apiServer: typeof app;
   private discordBot: typeof client;
 
   constructor() {
-    this.apiServer = new APIServer();
+    this.apiServer = app;
     this.discordBot = client;
   }
 
@@ -14,6 +15,7 @@ class PMCBot {
     try {
       await this.discordBot.start();
       this.apiServer.start();
+      wss.start();
 
       this.setupGracefulShutdown();
     } catch (error) {

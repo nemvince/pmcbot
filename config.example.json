@@ -1,0 +1,18 @@
+{
+  "discord": {
+    "appId": "000000000000000000",
+    "botToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "guildId": "0000000000000000000"
+  },
+  "microsoft": {
+    "clientId": "00000000-0000-0000-0000-000000000000",
+    "tenantId": "00000000-0000-0000-0000-000000000000",
+    "clientSecret": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "redirectUri": "http://localhost:3000/auth/callback",
+    "scopes": "user.read"
+  },
+  "server": {
+    "port": 3000,
+    "wsPort": 3001
+  }
+}

@@ -19,3 +19,5 @@ export class APIServer {
     });
   }
 }
+
+export const app = new APIServer();

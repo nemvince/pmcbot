@@ -1,5 +1,4 @@
 import { CommandInteraction, SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import { config } from "@/utils/config";
 import { prisma } from "@/utils/prisma";
 
 export const data = new SlashCommandBuilder()

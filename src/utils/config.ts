@@ -13,6 +13,7 @@ interface Config {
   }
   server: {
     port: number;
+    wsPort: number;
   }
 }
 

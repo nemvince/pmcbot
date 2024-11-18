@@ -7,16 +7,6 @@ export const data = new SlashCommandBuilder()
   .setDescription("Csatold a Microsoft fiókodat a Discord fiókodhoz.");
 
 export async function execute(interaction: CommandInteraction) {
-  const waitEmbed = new EmbedBuilder()
-    .setTitle('Microsoft fiók csatlakoztatása')
-    .setDescription('Kérlek várj, mindjárt küldök egy üzenetet a Microsoft fiókod csatlakoztatásához.')
-    .setColor('Yellow')
-    .setTimestamp();
-
-  await interaction.reply({
-    embeds: [ waitEmbed ],
-    ephemeral: true,
-  });
 
   const authUrl = `https://login.microsoftonline.com/` +
     `${config.microsoft.tenantId}` +
@@ -33,21 +23,25 @@ export async function execute(interaction: CommandInteraction) {
     .setColor('Green')
     .setTimestamp();
 
-  const user = await prisma.user.findUnique({
+
+
+  let user = await prisma.user.findUnique({
     where: { discord_id: interaction.user.id }
   });
 
   if (!user) {
-    await prisma.user.create({
+    user = await prisma.user.create({
       data: {
         discord_id: interaction.user.id
       }
     });
+
+    console.log(`Created new user with ID ${interaction.user.id}`);
   }
 
-  let components: any[] = []
+  let components: { type: number; components: { type: number; style: number; label: string; url: string; }[]; }[] = []
 
-  if (user?.microsoft_id) {
+  if (user.microsoft_id) {
     embed.setDescription('A Microsoft fiókod már csatlakoztatva van!');
     embed.setColor('Red');
   } else {
@@ -62,16 +56,9 @@ export async function execute(interaction: CommandInteraction) {
     }];
   }
 
-  const userMessage = await interaction.user.send({
-    embeds: [ embed ],
-    components
+  await interaction.reply({
+    embeds: [embed],
+    ephemeral: true,
+    components,
   });
-
-  waitEmbed.setDescription('Az üzenet elküldve a privát üzeneteid közé.');
-  waitEmbed.setColor('Green');
-  await interaction.editReply({
-    embeds: [ waitEmbed ],
-  });
-
-  console.log(`Sent link message with ID ${userMessage.id}`);
 }

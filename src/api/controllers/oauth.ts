@@ -10,17 +10,17 @@ interface UserResponse {
     mail: string;
 }
 
+interface TokenResponse {
+    access_token: string;
+    refresh_token: string;
+}
+
 export const authCallback = async (req: express.Request, res: express.Response) => {
     const { code, state } = req.query;
     const discordUserId = state;
 
     try {
-        interface TokenResponse {
-            access_token: string;
-            refresh_token: string;
-        }
-
-        const tokenResponse = await axios.post<TokenResponse>(`https://login.microsoftonline.com/${config.microsoft.tenantId}/oauth2/v2.0/token`, 
+        const tokenResponse = await axios.post<TokenResponse>(`https://login.microsoftonline.com/${config.microsoft.tenantId}/oauth2/v2.0/token`,
             new URLSearchParams({
                 client_id: config.microsoft.clientId,
                 client_secret: config.microsoft.clientSecret,
@@ -28,10 +28,10 @@ export const authCallback = async (req: express.Request, res: express.Response) 
                 redirect_uri: config.microsoft.redirectUri,
                 grant_type: 'authorization_code'
             }), {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
             }
+        }
         );
 
         // Get Microsoft user info
@@ -67,7 +67,7 @@ export const authCallback = async (req: express.Request, res: express.Response) 
 
         // Notify user through Discord
         if (discordUserId) {
-          await client.sendSuccessfulLinkMessage(discordUserId as string);
+            await client.sendSuccessfulLinkMessage(discordUserId as string);
         }
 
         res.send('Account linked successfully! You can close this window.');

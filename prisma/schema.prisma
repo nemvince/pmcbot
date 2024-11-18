@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -16,10 +17,20 @@ model User {
   name         String?
   email        String?
 
-  mc_username String?
+  mc_username String? @unique
 
   last_seen     DateTime @default(now())
   allowed_login Boolean  @default(true)
 
+  auth_requests AuthRequest[]
+
+  created_at DateTime @default(now())
+}
+
+model AuthRequest {
+  id String @id @default(cuid())
+  user User @relation(fields: [user_id], references: [discord_id])
+  user_id String
+  code String
   created_at DateTime @default(now())
 }
