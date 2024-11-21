@@ -15,6 +15,7 @@ interface Config {
     port: number;
     wsPort: number;
   }
+  staticFilesPath: string;
 }
 
 // from .json

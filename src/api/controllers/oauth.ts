@@ -3,6 +3,7 @@ import { config } from '@/utils/config';
 import { client } from '@/discord';
 import { prisma } from '@/utils/prisma';
 import express from 'express';
+import { template } from '@/utils/template';
 
 interface UserResponse {
     displayName: string;
@@ -70,9 +71,17 @@ export const authCallback = async (req: express.Request, res: express.Response) 
             await client.sendSuccessfulLinkMessage(discordUserId as string);
         }
 
-        res.send('Account linked successfully! You can close this window.');
+        res.send(await template('callback', {
+            title: 'Sikeres hozzákapcsolás',
+            msg1: 'Sikeresen összekapcsoltad a fiókodat a Microsoft fiókoddal.',
+            msg2: 'Visszatérhetsz a Discord szerverre.'
+        }))
     } catch (error) {
         console.error('Error during OAuth:', error);
-        res.status(500).send('An error occurred during authentication.');
+        res.send(await template('callback', {
+            title: 'Hiba történt',
+            msg1: 'Hiba történt',
+            msg2: 'Kérlek próbáld újra később.'
+        }))
     }
 };
