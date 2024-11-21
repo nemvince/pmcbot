@@ -5,7 +5,9 @@ import { wss } from '@/wss';
 import { nanoid } from 'nanoid';
 
 export const startAuthorization = async (req: Request, res: Response) => {
-  const { mc_username } = req.body;
+  const { mc_username, ip } = req.body;
+
+  console.log(`Received authorization request for ${mc_username} from ${ip}`);
 
   if (typeof mc_username !== 'string') {
     res.status(400).json({ error: 'Invalid request' });

@@ -19,11 +19,6 @@ export class WSSServer {
 
   public start() {
     console.log(`WebSocket server listening on port ${config.server.wsPort}`);
-    this.wss.on('connection', (ws) => {
-      ws.on('message', (message) => {
-        console.log(`Received message: ${message}`);
-      });
-    });
   }
 }
 
