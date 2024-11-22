@@ -19,6 +19,6 @@ interface Config {
 }
 
 // from .json
-import configJson from '../../config.json';
+import configJson from 'data/config.json';
 
 export const config: Config = configJson;
