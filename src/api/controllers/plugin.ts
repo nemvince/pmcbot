@@ -3,11 +3,12 @@ import { prisma } from '@/utils/prisma';
 import { wss } from '@/wss';
 // for random string generation
 import { nanoid } from 'nanoid';
+import { logger } from '..';
 
 export const startAuthorization = async (req: Request, res: Response) => {
   const { mc_username, ip } = req.body;
 
-  console.log(`Received authorization request for ${mc_username} from ${ip}`);
+  logger.log(`Received authorization request for ${mc_username} from ${ip}`);
 
   if (typeof mc_username !== 'string') {
     res.status(400).json({ error: 'Invalid request' });
@@ -54,7 +55,7 @@ export const startAuthorization = async (req: Request, res: Response) => {
     }
   });
 
-  console.log(`Generated code ${code} for user ${mc_username}`);
+  logger.log(`Created authorization request for ${mc_username} with code ${code}`);
 
   res.json({ code });
 }

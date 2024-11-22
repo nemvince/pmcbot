@@ -1,10 +1,6 @@
-import * as ping from "./commands/ping";
-import * as link from "./commands/link";
-import * as unlink from "./commands/unlink";
-import * as username from "./commands/username";
-import * as auth from "./commands/authorize";
 import { config } from "@/utils/config";
-import { REST, Routes, Client, EmbedBuilder, type Interaction, Collection } from "discord.js";
+import adze from "adze";
+import { REST, Routes, Client, EmbedBuilder, type Interaction, Collection, SlashCommandBuilder } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -12,19 +8,17 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
 
-const commands = {
-  ping,
-  link,
-  unlink,
-  username,
-  auth
-};
+export const logger = new adze({ showTimestamp: true }).namespace('DSC').seal();
 
+interface Command {
+  data: SlashCommandBuilder;
+  execute: (interaction: Interaction) => void;
+}
 
 export class DiscordBot {
   public client: Client;
   private rest: REST;
-  private commandsData: Collection<string, unknown> = new Collection();
+  private commandsData: Collection<string, Command> = new Collection();
 
   constructor() {
     this.client = new Client({
@@ -46,25 +40,25 @@ export class DiscordBot {
       const filePath = path.join(foldersPath, file);
       const command = await import(filePath);
       if ('data' in command && 'execute' in command) {
-        console.log(`[INFO] Loaded command ${command.data.name} from ${filePath}`);
+        logger.log(`Loaded command ${command.data.name} from ${filePath}`);
         this.commandsData.set(command.data.name, command);
       } else {
-        console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+        logger.error(`Command ${file} is missing data or execute function!`);
       }
     }
   }
 
   private async onReady() {
-    console.log("Discord bot ready!");
+    logger.success(`Logged in as ${this.client.user}`);
   }
 
   private async onInteractionCreate(interaction: Interaction) {
     if (interaction.isCommand()) {
       const { commandName } = interaction;
 
-      if (commands[commandName as keyof typeof commands]) {
-        commands[commandName as keyof typeof commands].execute(interaction);
-      }
+      const command = this.commandsData.get(commandName);
+      if (!command) return;
+      command.execute(interaction);
     }
 
     return;
@@ -73,16 +67,17 @@ export class DiscordBot {
   public async start() {
     try {
       await this.loadCommands();
-      console.log("Started refreshing application (/) commands.");
+      logger.log(`Loaded ${this.commandsData.size} commands.`);
       await this.rest.put(
         Routes.applicationGuildCommands(config.discord.appId, config.discord.guildId),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { body: this.commandsData.map((command: any) => command.data.toJSON()) }
       );
 
-      console.log("Successfully reloaded application (/) commands.");
+      logger.success('Successfully registered application commands.');
     } catch (error) {
-      console.error(error);
+      logger.fail('Failed to register application commands.');
+      logger.error(error);
     }
 
     await this.client.login(config.discord.botToken);

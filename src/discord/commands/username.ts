@@ -6,6 +6,7 @@ import {
   ActionRowBuilder, 
   ButtonBuilder, 
   ButtonStyle} from "discord.js";
+import { logger } from "..";
 
 export const data = new SlashCommandBuilder()
   .setName("username")
@@ -141,10 +142,14 @@ export async function execute(interaction: CommandInteraction) {
         }
       });
 
-      // TODO: figure out why this doesn't work
-      // await i.guild?.members.fetch(interaction.user.id).then(member => {
-      //   member.setNickname(`${interaction.user.username} | ${username}`);
-      // });
+      // change member nickname
+      const guild = interaction.guild;
+      if (guild) {
+        const member = guild.members.cache.get(interaction.user.id);
+        if (member) {
+          await member.setNickname(username);
+        }
+      }
 
       const successEmbed = new EmbedBuilder()
         .setTitle('Minecraft felhasználónév beállítása')
@@ -157,8 +162,7 @@ export async function execute(interaction: CommandInteraction) {
         components: [] 
       });
 
-      // Here you would typically save the username to a database
-      console.log(`Username set: ${username}`);
+      logger.log(`Set Minecraft username for Discord ID ${interaction.user.id} to ${username}`);
     } else if (i.customId === 'username_cancel') {
       const cancelEmbed = new EmbedBuilder()
         .setTitle('Felhasználónév beállítás megszakítva')

@@ -1,6 +1,9 @@
+import adze from "adze";
 import { app } from "./api";
 import { client } from "./discord";
 import { wss } from "./wss";
+
+const logger = new adze({ showTimestamp: true }).namespace("PMCBot").seal();
 
 class PMCBot {
   private apiServer: typeof app;
@@ -19,18 +22,18 @@ class PMCBot {
 
       this.setupGracefulShutdown();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   }
 
   private setupGracefulShutdown() {
     process.on("SIGINT", async () => {
-      console.log("Shutting down...");
+      logger.warn("Shutting down...");
       process.exit(0);
     });
 
     process.on("SIGTERM", async () => {
-      console.log("Shutting down...");
+      logger.warn("Shutting down...");
       process.exit(0);
     });
   }

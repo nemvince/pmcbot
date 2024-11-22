@@ -1,6 +1,7 @@
 import { CommandInteraction, SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { config } from "@/utils/config";
 import { prisma } from "@/utils/prisma";
+import { logger } from "..";
 
 export const data = new SlashCommandBuilder()
   .setName("link")
@@ -23,8 +24,6 @@ export async function execute(interaction: CommandInteraction) {
     .setColor('Green')
     .setTimestamp();
 
-
-
   let user = await prisma.user.findUnique({
     where: { discord_id: interaction.user.id }
   });
@@ -36,7 +35,7 @@ export async function execute(interaction: CommandInteraction) {
       }
     });
 
-    console.log(`Created new user with ID ${interaction.user.id}`);
+    logger.log(`Created new user with Discord ID ${interaction.user.id}`);
   }
 
   let components: { type: number; components: { type: number; style: number; label: string; url: string; }[]; }[] = []

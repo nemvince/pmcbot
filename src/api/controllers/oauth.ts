@@ -4,6 +4,7 @@ import { client } from '@/discord';
 import { prisma } from '@/utils/prisma';
 import express from 'express';
 import { template } from '@/utils/template';
+import { logger } from '..';
 
 interface UserResponse {
     displayName: string;
@@ -77,7 +78,7 @@ export const authCallback = async (req: express.Request, res: express.Response) 
             msg2: 'Visszatérhetsz a Discord szerverre.'
         }))
     } catch (error) {
-        console.error('Error during OAuth:', error);
+        logger.error(error);
         res.send(await template('callback', {
             title: 'Hiba történt',
             msg1: 'Hiba történt',

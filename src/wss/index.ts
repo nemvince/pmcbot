@@ -1,6 +1,8 @@
 import WebSocket from 'ws';
-
 import { config } from '@/utils/config';
+import adze from 'adze';
+
+export const logger = new adze({ showTimestamp: true }).namespace('WSS').seal();
 
 export class WSSServer {
   private wss: WebSocket.Server;
@@ -18,7 +20,14 @@ export class WSSServer {
   }
 
   public start() {
-    console.log(`WebSocket server listening on port ${config.server.wsPort}`);
+    this.wss.on('connection', (ws) => {
+      logger.log('Client connected');
+      ws.on('message', (message) => {
+        logger.log('Received message:', message);
+      });
+    });
+
+    logger.info(`Listening on port ${config.server.wsPort}`);
   }
 }
 

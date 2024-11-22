@@ -3,9 +3,12 @@ import { config } from '@/utils/config';
 import router from './router';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import adze from 'adze';
 
-const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
-const __dirname = path.dirname(__filename); // get the name of the directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export const logger = new adze({ showTimestamp: true }).namespace('API').seal();
 
 export class APIServer {
   private app: Express;
@@ -23,7 +26,7 @@ export class APIServer {
 
   public start() {
     this.app.listen(config.server.port, () => {
-      console.log(`API server listening on port ${config.server.port}`);
+      logger.info(`Listening on port ${config.server.port}`);
     });
   }
 }
