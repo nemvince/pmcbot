@@ -6,9 +6,9 @@ generator client {
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
-datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+datasource postgres {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
