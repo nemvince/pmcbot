@@ -145,9 +145,15 @@ export async function execute(interaction: CommandInteraction) {
       // change member nickname
       const guild = interaction.guild;
       if (guild) {
-        const member = guild.members.cache.get(interaction.user.id);
-        if (member) {
-          await member.setNickname(username);
+        try {
+          const member = guild.members.cache.get(interaction.user.id);
+          if (member) {
+            // [original nickname] [username]
+            const nickname = `${member.user.globalName} | ${username}`;
+            await member.setNickname(nickname);
+          }
+        } catch (error) {
+          logger.error(`Failed to change nickname for Discord ID ${interaction.user.id} to ${username}`, error);
         }
       }
 

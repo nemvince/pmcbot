@@ -33,7 +33,8 @@ export async function execute(interaction: CommandInteraction) {
     data: {
       microsoft_id: null,
       email: null,
-      name: null
+      name: null,
+      allowed_login: false
     }
   });
 
